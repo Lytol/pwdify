@@ -1,7 +1,12 @@
-pwdify:
-	@go build -o pwdify cmd/pwdify/*
+BINFILE=pwdify
+
+build:
+	go build -o ${BINFILE} cmd/pwdify/*
 
 run: pwdify
-	@./pwdify $(ARGS)
+	@DEBUG=1 go run cmd/pwdify/* $(ARGS)
 
-.PHONY: build
+test:
+	go test -v ./...
+
+.PHONY: build run test
