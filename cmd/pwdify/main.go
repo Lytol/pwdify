@@ -8,7 +8,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/lytol/pwdify"
 	"github.com/lytol/pwdify/internal/util"
 )
 
@@ -18,7 +17,6 @@ var (
 	primaryStyle            = lipgloss.NewStyle().Foreground(lipgloss.Color("#B9EBFF"))
 	secondaryStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#65C1E3"))
 	tertiaryStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color("#208EAD"))
-	helpStyle               = lipgloss.NewStyle().Foreground(lipgloss.Color("#777777"))
 	alternateStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#DB9655"))
 	alternateSecondaryStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#BF9D80"))
 )
@@ -28,13 +26,15 @@ type PasswordCompleteMsg struct {
 }
 
 type FilesCompleteMsg struct {
-	Path string
+	Files []string
 }
 
 type model struct {
 	models  []tea.Model
 	current int
-	config  pwdify.Config
+
+	password string
+	files    []string
 }
 
 func newModel() model {
@@ -43,8 +43,9 @@ func newModel() model {
 			newPasswordModel(),
 			newFilesModel(),
 		},
-		current: 0,
-		config:  pwdify.Config{},
+		current:  0,
+		password: "",
+		files:    []string{},
 	}
 }
 
@@ -61,6 +62,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		for _, m := range m.models {
+			m.Update(msg)
+		}
+		return m, nil
+
 	case tea.KeyMsg:
 		logger.Logf("Update | key: `%s`\n", msg.String())
 
@@ -72,13 +79,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case PasswordCompleteMsg:
 		logger.Logf("Update | password: `%s`\n", msg.Password)
-		m.config.Password = msg.Password
+		m.password = msg.Password
 		m.current += 1
 		return m, m.Current().Init()
 
 	case FilesCompleteMsg:
-		logger.Logf("Update | file: `%s`\n", msg.Path)
-		m.config.Path = msg.Path
+		logger.Logf("Update | file: `%s`\n", msg.Files)
+		m.files = msg.Files
 		return m, tea.Quit
 	}
 

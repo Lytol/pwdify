@@ -5,6 +5,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type passwordModel struct {
@@ -57,8 +58,10 @@ func (m passwordModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m passwordModel) View() string {
 	var b strings.Builder
 
-	b.WriteString(primaryStyle.MarginBottom(1).Render("What password do you want to use?") + "\n")
-	b.WriteString(m.password.View() + "\n")
+	b.WriteString(primaryStyle.MarginLeft(2).MarginBottom(1).Render("What password do you want to use?") + "\n")
+	b.WriteString(lipgloss.NewStyle().MarginLeft(2).Render(m.password.View()) + "\n")
 
 	return b.String()
 }
+
+func (m passwordModel) SetSize(width, height int) {}
