@@ -1,31 +1,29 @@
 package pwdify
 
-type Engine struct {
-	Files    []string
-	Password string
+import "time"
+
+type Status struct {
+	File  string
+	Error error
 }
 
-func New(files []string, password string) *Engine {
-	return &Engine{
-		Files:    files,
-		Password: password,
-	}
+type Engine struct{}
+
+func New() *Engine {
+	return &Engine{}
 }
 
-func (e *Engine) Run() error {
-	// TODO
-	return nil
-}
+func (e *Engine) Run(files []string, password string) chan Status {
+	ch := make(chan Status)
 
-func (e *Engine) Status() map[string]bool {
-	status := make(map[string]bool)
+	go func() {
+		for _, file := range files {
+			time.Sleep(1 * time.Second)
+			err := EncryptFile(file, password)
+			ch <- Status{File: file, Error: err}
+		}
+		close(ch)
+	}()
 
-	// TODO
-
-	return status
-}
-
-func (e *Engine) Completed() bool {
-	// TODO
-	return false
+	return ch
 }

@@ -14,11 +14,20 @@ import (
 var (
 	logger util.Logger
 
-	primaryStyle            = lipgloss.NewStyle().Foreground(lipgloss.Color("#B9EBFF"))
-	secondaryStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#65C1E3"))
-	tertiaryStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color("#208EAD"))
-	alternateStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#DB9655"))
-	alternateSecondaryStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#BF9D80"))
+	primaryColor            = "#B9EBFF"
+	secondaryColor          = "#65C1E3"
+	tertiaryColor           = "#208EAD"
+	alternateColor          = "#DB9655"
+	alternateSecondaryColor = "#BF9D80"
+
+	primaryStyle            = lipgloss.NewStyle().Foreground(lipgloss.Color(primaryColor))
+	secondaryStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color(secondaryColor))
+	tertiaryStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color(tertiaryColor))
+	alternateStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color(alternateColor))
+	alternateSecondaryStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(alternateSecondaryColor))
+
+	successStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#5FD35F"))
+	failureStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#D75F5F"))
 )
 
 type PasswordCompleteMsg struct {

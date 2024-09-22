@@ -8,10 +8,10 @@ A command line utility to password protect static web pages.
 
 - [ ] Status screen should perform the encryptions
 - [ ] Status screen should show list of files to be encrypted (with status)
-- [ ] Encrypt selected files using password
-  - [ ] Use WebCrypto API
-  - [ ] Store password in localstorage
-  - [ ] Password form template
+  - [ ] Use spinner and checkmark next to each file?
+- [ ] Decrypt
+  - [ ] Decrypt chould use AES-GCM
+  - [ ] Store password in localstorage / sessionstorage
 - [ ] Show keyboard help for each model screen
 - [ ] A file must be selected to continue on the files screen
 - [ ] Select all / Select none for files

@@ -9,6 +9,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type fileItem struct {
@@ -64,6 +65,7 @@ func newFilesModel(s *state) filesModel {
 	l := list.New([]list.Item{}, fileItemDelegate{}, 80, 10)
 	l.Title = "Select files to password protect"
 	l.Styles.Title = primaryStyle
+	l.SetHeight(12)
 
 	return filesModel{
 		state: s,
@@ -131,7 +133,7 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m filesModel) View() string {
 	var b strings.Builder
 
-	b.WriteString(m.files.View() + "\n")
+	b.WriteString(lipgloss.NewStyle().Margin(1, 2).Render(m.files.View()))
 
 	return b.String()
 }

@@ -60,8 +60,8 @@ func (m passwordModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m passwordModel) View() string {
 	var b strings.Builder
 
-	b.WriteString(primaryStyle.MarginLeft(2).MarginBottom(1).Render("What password do you want to use?") + "\n")
-	b.WriteString(lipgloss.NewStyle().MarginLeft(2).Render(m.password.View()) + "\n")
+	b.WriteString(primaryStyle.Margin(1, 2).Render("What password do you want to use?") + "\n")
+	b.WriteString(lipgloss.NewStyle().Margin(0, 2).Render(m.password.View()) + "\n")
 
 	return b.String()
 }
