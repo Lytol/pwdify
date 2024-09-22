@@ -12,4 +12,7 @@ test:
 build-template:
 	cd template && npm run build
 
+install: build
+	sudo mv ${BINFILE} /usr/local/bin/
+
 .PHONY: build build-template run test
