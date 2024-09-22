@@ -1,6 +1,6 @@
 BINFILE=pwdify
 
-build:
+build: build-template
 	go build -o ${BINFILE} cmd/pwdify/*
 
 run: pwdify
@@ -9,4 +9,7 @@ run: pwdify
 test:
 	go test -v ./...
 
-.PHONY: build run test
+build-template:
+	cd template && npm run build
+
+.PHONY: build build-template run test

@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Password Required</title>
   </head>
-  <body>
+  <body data-encrypted-content="{{ .EncryptedContent }}">
     <form>
-      <input type="password" id="password" placeholder="Password" />
+      <input type="password" placeholder="Password" />
     </form>
     <script type="module" src="/src/main.ts"></script>
   </body>

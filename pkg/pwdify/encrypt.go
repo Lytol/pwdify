@@ -1,13 +1,21 @@
 package pwdify
 
 import (
+	"bufio"
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
+	_ "embed"
+	"encoding/hex"
+	"html/template"
 	"io"
 	"os"
 )
+
+//go:embed template.html.tmpl
+var templateContent string
 
 func Encrypt(path string, password string) ([]byte, error) {
 	data, err := os.ReadFile(path)
@@ -28,9 +36,12 @@ func EncryptFile(path string, password string) error {
 		return err
 	}
 
-	// TODO: Generate from template
+	content, err := protectedPageContent(encrypted)
+	if err != nil {
+		return err
+	}
 
-	return os.WriteFile(path, encrypted, 0644)
+	return os.WriteFile(path, content, 0644)
 }
 
 func encryptData(data []byte, key []byte) ([]byte, error) {
@@ -50,4 +61,26 @@ func encryptData(data []byte, key []byte) ([]byte, error) {
 	}
 
 	return gcm.Seal(nonce, nonce, data, nil), nil
+}
+
+func protectedPageContent(data []byte) ([]byte, error) {
+	var content bytes.Buffer
+	w := bufio.NewWriter(&content)
+
+	tmpl, err := template.New("protectedPage").Parse(templateContent)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tmpl.Execute(w, struct{ EncryptedContent string }{hex.EncodeToString(data)})
+	if err != nil {
+		return nil, err
+	}
+
+	err = w.Flush()
+	if err != nil {
+		return nil, err
+	}
+
+	return content.Bytes(), nil
 }

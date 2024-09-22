@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Required</title>
+    <script type="module" crossorigin>(function(){const o=document.createElement("link").relList;if(o&&o.supports&&o.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))r(e);new MutationObserver(e=>{for(const t of e)if(t.type==="childList")for(const s of t.addedNodes)s.tagName==="LINK"&&s.rel==="modulepreload"&&r(s)}).observe(document,{childList:!0,subtree:!0});function c(e){const t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),e.crossOrigin==="use-credentials"?t.credentials="include":e.crossOrigin==="anonymous"?t.credentials="omit":t.credentials="same-origin",t}function r(e){if(e.ep)return;e.ep=!0;const t=c(e);fetch(e.href,t)}})();document.addEventListener("DOMContentLoaded",()=>{const n=document.querySelector('input[type="password"]');n.focus();const o=document.querySelector("body").getAttribute("data-encrypted-content");console.log(o),document.querySelector("form").addEventListener("submit",r=>{r.preventDefault();const e=n.value;console.log(e)})});
+</script>
+    <style rel="stylesheet" crossorigin>:root{--background-color: #efefef;--password-width: 250px;--password-border: #666;background-color:var(--background-color);font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}body{margin:0;padding:0;display:flex;place-items:center;min-width:var(--password-width);min-height:100vh}form{margin:auto}input[type=password]{font-size:1rem;padding:.5rem .5rem .5rem 2.5rem;width:var(--password-width);border:1px solid var(--password-border);border-radius:.25rem;background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clip-rule="evenodd" /></svg>');background-repeat:no-repeat;background-position:center left .5rem;background-size:1.5rem}
+</style>
+  </head>
+  <body data-encrypted-content="b659f31971cf4d38cc409e477c262f76073a606468c8673f1655a5b2da21aaa7380813252089d900874beec16cdac2890bf5d5886500c4c22fda8f55614ca95bc715ea59953c7fee7232c8e13697996931a38e2d85e4f337d1086dd3dbc278d14cecc00efa47cae6a75c9d1424e251fbe77ac3125ac432d6bf5a679243c22edc7b6f0d6661afe2514218cc5475364dba40a91e08bab52dce4bf7b3c45f4ab90dc18660a708146221d9ba52bc058f61a4712f2af655013bc79e6b4082b823090288c705dcf810">
+    <form>
+      <input type="password" placeholder="Password" />
+    </form>
+  </body>
+</html>

@@ -19,8 +19,9 @@ func TestEncrypt(t *testing.T) {
 }
 
 func TestEncryptFile(t *testing.T) {
-	tmpDir := t.TempDir()
-	tmpPath := filepath.Join(tmpDir, "example.html")
+	// tmpDir := t.TempDir()
+	// tmpPath := filepath.Join(tmpDir, "example.html")
+	tmpPath := filepath.Join("testdata", "_example.html")
 
 	err := copy("testdata/example.html", tmpPath)
 	if err != nil {
