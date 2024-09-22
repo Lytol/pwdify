@@ -42,6 +42,7 @@ func newModel() model {
 		models: []tea.Model{
 			newPasswordModel(),
 			newFilesModel(),
+			newStatusModel(),
 		},
 		current:  0,
 		password: "",
@@ -86,7 +87,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case FilesCompleteMsg:
 		logger.Logf("Update | file: `%s`\n", msg.Files)
 		m.files = msg.Files
-		return m, tea.Quit
+		m.current += 1
+		return m, m.Current().Init()
 	}
 
 	m.models[m.current], cmd = m.Current().Update(msg)

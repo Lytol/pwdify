@@ -63,5 +63,3 @@ func (m passwordModel) View() string {
 
 	return b.String()
 }
-
-func (m passwordModel) SetSize(width, height int) {}

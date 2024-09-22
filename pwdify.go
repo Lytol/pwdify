@@ -1,11 +1,17 @@
 package pwdify
 
-func Encrypt(password string, files []string) error {
-	// TODO: should encrypt the files with the password
+func Encrypt(password string, paths []string) error {
+	for _, path := range paths {
+		err := EncryptFile(password, path)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
-func EncryptFile(password, file string) error {
+func EncryptFile(password, path string) error {
 	// TODO: should encrypt file with the password
 	return nil
 }

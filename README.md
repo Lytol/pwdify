@@ -6,16 +6,17 @@ A command line utility to password protect static web pages.
 
 ### Notes
 
-- [ ] User should be able to select multiple files
-  - [ ] Use list rather than filepicker and recursively include all .html files with checkboxes
-  - [ ] Select all / Select none
+- [ ] A file must be selected to continue on the files screen
+- [ ] Status screen should perform the encryptions
+- [ ] Status screen should show list of files to be encrypted (with status)
 - [ ] Encrypt selected files using password
   - [ ] Use WebCrypto API
   - [ ] Store password in localstorage
   - [ ] Password form template
+- [ ] Show keyboard help for each model screen
+- [ ] Select all / Select none for files
 - [ ] Password should be able to be specified via command line argument
 - [ ] Files should be able to be specified via command line argument (and stdin, newline separated)
-- [ ] Show keyboard help for each model screen
 
 ### Questions
 
