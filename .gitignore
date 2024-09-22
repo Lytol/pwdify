@@ -1,3 +1,4 @@
 /pwdify
 /debug.log
 /pkg/pwdify/template.html.tmpl
+/pkg/pwdify/testdata/_*.html
