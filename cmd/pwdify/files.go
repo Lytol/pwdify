@@ -57,14 +57,16 @@ type readDirMsg struct {
 
 type filesModel struct {
 	files list.Model
+	state *state
 }
 
-func newFilesModel() filesModel {
+func newFilesModel(s *state) filesModel {
 	l := list.New([]list.Item{}, fileItemDelegate{}, 80, 10)
 	l.Title = "Select files to password protect"
 	l.Styles.Title = primaryStyle
 
 	return filesModel{
+		state: s,
 		files: l,
 	}
 }

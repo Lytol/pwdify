@@ -2,31 +2,28 @@ package main
 
 import (
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/progress"
-	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type statusTickMsg struct{}
+
 type statusModel struct {
-	spinner  spinner.Model
 	progress progress.Model
+	state    *state
 }
 
-func newStatusModel() statusModel {
-	s := spinner.New()
-	s.Spinner = spinner.Dot
-	s.Style = primaryStyle
-
+func newStatusModel(s *state) statusModel {
 	return statusModel{
-		spinner:  s,
 		progress: progress.New(progress.WithDefaultGradient()),
+		state:    s,
 	}
 }
 
 func (m statusModel) Init() tea.Cmd {
-	logger.Logf("Init[status]\n")
-	return m.spinner.Tick
+	return m.encrypt
 }
 
 func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -36,9 +33,11 @@ func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		logger.Logf("Update[status] | key: `%s`\n", msg.String())
 		return m, nil
-	}
 
-	m.spinner, cmd = m.spinner.Update(msg)
+	case statusTickMsg:
+		logger.Logf("Update[status] | tick\n")
+		return m, m.tick()
+	}
 
 	return m, cmd
 }
@@ -46,10 +45,17 @@ func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m statusModel) View() string {
 	var b strings.Builder
 
-	b.WriteString(strings.Join([]string{
-		m.spinner.View(),
-		m.progress.View(),
-	}, " ") + "\n")
+	b.WriteString(m.progress.View() + "\n")
 
 	return b.String()
+}
+
+func (m statusModel) encrypt() tea.Msg {
+	return statusTickMsg{}
+}
+
+func (m statusModel) tick() tea.Cmd {
+	return tea.Every(time.Second, func(t time.Time) tea.Msg {
+		return statusTickMsg{}
+	})
 }

@@ -10,9 +10,10 @@ import (
 
 type passwordModel struct {
 	password textinput.Model
+	state    *state
 }
 
-func newPasswordModel() passwordModel {
+func newPasswordModel(s *state) passwordModel {
 	t := textinput.New()
 	t.PromptStyle = alternateStyle
 	t.TextStyle = secondaryStyle
@@ -24,6 +25,7 @@ func newPasswordModel() passwordModel {
 	t.Focus()
 
 	return passwordModel{
+		state:    s,
 		password: t,
 	}
 }

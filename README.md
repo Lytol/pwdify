@@ -6,7 +6,6 @@ A command line utility to password protect static web pages.
 
 ### Notes
 
-- [ ] A file must be selected to continue on the files screen
 - [ ] Status screen should perform the encryptions
 - [ ] Status screen should show list of files to be encrypted (with status)
 - [ ] Encrypt selected files using password
@@ -14,9 +13,12 @@ A command line utility to password protect static web pages.
   - [ ] Store password in localstorage
   - [ ] Password form template
 - [ ] Show keyboard help for each model screen
+- [ ] A file must be selected to continue on the files screen
 - [ ] Select all / Select none for files
 - [ ] Password should be able to be specified via command line argument
 - [ ] Files should be able to be specified via command line argument (and stdin, newline separated)
+- [ ] Everything should account appropriately for window size (WindowSizeMsg)
+- [ ] Accept a directory rather than assuming CWD
 
 ### Questions
 

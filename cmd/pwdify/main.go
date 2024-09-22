@@ -32,22 +32,21 @@ type FilesCompleteMsg struct {
 type model struct {
 	models  []tea.Model
 	current int
-
-	password string
-	files    []string
+	state   *state
 }
 
-func newModel() model {
-	return model{
+func newModel(s *state) model {
+	root := model{
+		state: s,
 		models: []tea.Model{
-			newPasswordModel(),
-			newFilesModel(),
-			newStatusModel(),
+			newPasswordModel(s),
+			newFilesModel(s),
+			newStatusModel(s),
 		},
-		current:  0,
-		password: "",
-		files:    []string{},
+		current: 0,
 	}
+
+	return root
 }
 
 func (m model) Current() tea.Model {
@@ -80,13 +79,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case PasswordCompleteMsg:
 		logger.Logf("Update | password: `%s`\n", msg.Password)
-		m.password = msg.Password
+		m.state.password = msg.Password
 		m.current += 1
 		return m, m.Current().Init()
 
 	case FilesCompleteMsg:
 		logger.Logf("Update | file: `%s`\n", msg.Files)
-		m.files = msg.Files
+		m.state.files = msg.Files
 		m.current += 1
 		return m, m.Current().Init()
 	}
@@ -113,7 +112,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	if _, err = tea.NewProgram(newModel()).Run(); err != nil {
+	state := &state{
+		password: "",
+		files:    []string{},
+	}
+
+	if _, err = tea.NewProgram(newModel(state)).Run(); err != nil {
 		fmt.Printf("could not start program: %s\n", err)
 		os.Exit(1)
 	}
