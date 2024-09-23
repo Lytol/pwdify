@@ -60,7 +60,9 @@ func encryptData(data []byte, key []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	return gcm.Seal(nonce, nonce, data, nil), nil
+	full := gcm.Seal(nonce, nonce, data, nil)
+
+	return full, nil
 }
 
 func protectedPageContent(data []byte) ([]byte, error) {

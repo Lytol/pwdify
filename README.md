@@ -6,9 +6,6 @@ A command line utility to password protect static web pages.
 
 ### Notes
 
-- [ ] Status screen should perform the encryptions
-- [ ] Status screen should show list of files to be encrypted (with status)
-  - [ ] Use spinner and checkmark next to each file?
 - [ ] Decrypt
   - [ ] Decrypt chould use AES-GCM
   - [ ] Store password in localstorage / sessionstorage
