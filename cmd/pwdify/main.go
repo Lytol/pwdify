@@ -29,8 +29,8 @@ func main() {
 
 	app := &cli.App{
 		Name:            "pwdify",
-		Usage:           "Password protect your static HTML",
-		ArgsUsage:       "[files... | directory]",
+		Usage:           "Password protect static web pages",
+		ArgsUsage:       "[file | directory ...]",
 		HideHelpCommand: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -42,7 +42,7 @@ func main() {
 			&cli.StringFlag{
 				Name:  "password-env",
 				Value: DefaultPasswordEnv,
-				Usage: "environment variable to read the password from",
+				Usage: "environment variable for password",
 			},
 		},
 		Action: func(ctx *cli.Context) error {

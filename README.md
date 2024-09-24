@@ -6,15 +6,15 @@ A command line utility to password protect static web pages.
 
 ### TODO
 
-- [ ] A file must be selected to continue on the files screen
 - [ ] Show keyboard help for each model screen
 - [ ] Select all / Select none for files
+- [ ] Output each file as it is completed on the status screen
 - [ ] Everything should account appropriately for window size (WindowSizeMsg)
 - [ ] GH action for releases
 
 - [ ] Create a GH action for community usage
-- [ ] Password should be able to be specified via file: --password-file
 - [ ] Non-interactive and "quiet" output when a tty doesn't exist (or --quiet/-q)
+- [ ] docs/ site for documentation and website
 
 ### Notes
 
