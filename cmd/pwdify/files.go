@@ -35,7 +35,7 @@ func (d fileItemDelegate) Render(w io.Writer, m list.Model, index int, item list
 	checkbox := "☐"
 
 	if i.selected {
-		checkbox = "☑"
+		checkbox = "■"
 	}
 
 	if index == m.Index() {
@@ -74,8 +74,7 @@ func newFilesModel(s *state) filesModel {
 }
 
 func (m filesModel) Init() tea.Cmd {
-	logger.Logf("Init[files]\n")
-	return readDir(".")
+	return readDir(m.state.cwd)
 }
 
 func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -98,20 +97,17 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.Type {
 		case tea.KeySpace:
-			logger.Logf("Update[files] | space\n")
 			i, ok := m.files.SelectedItem().(*fileItem)
 			if ok {
 				i.selected = !i.selected
 			}
 			return m, nil
 		case tea.KeyEnter:
-			logger.Logf("Update[files] | enter\n")
 			selectedFiles := []string{}
 
 			for _, item := range m.files.Items() {
 				i, ok := item.(*fileItem)
 				if !ok {
-					logger.Logf("Update[files] | item is not a *fileItem\n")
 					return m, tea.Quit
 				}
 
@@ -150,7 +146,7 @@ func readDir(path string) tea.Cmd {
 		})
 
 		if err != nil {
-			logger.Logf("readDir | error walking the path: %s\n", err)
+			fmt.Fprintf(os.Stderr, "could not read directory: %s\n", err)
 			return tea.Quit
 		}
 

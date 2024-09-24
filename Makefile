@@ -3,7 +3,7 @@ BINFILE=pwdify
 build: build-template
 	go build -o ${BINFILE} cmd/pwdify/*
 
-run: pwdify
+run:
 	@DEBUG=1 go run cmd/pwdify/* $(ARGS)
 
 test:

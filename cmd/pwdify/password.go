@@ -31,7 +31,6 @@ func newPasswordModel(s *state) passwordModel {
 }
 
 func (m passwordModel) Init() tea.Cmd {
-	logger.Logf("Init[password]\n")
 	return textinput.Blink
 }
 
@@ -40,11 +39,8 @@ func (m passwordModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		logger.Logf("Update[password] | key: `%s`\n", msg.String())
-
 		switch msg.Type {
 		case tea.KeyEnter:
-			logger.Logf("Update[password] | enter\n")
 			m.password.Blur()
 			return m, func() tea.Msg {
 				return PasswordCompleteMsg{Password: m.password.Value()}

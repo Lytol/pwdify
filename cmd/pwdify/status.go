@@ -43,11 +43,9 @@ func (m statusModel) Init() tea.Cmd {
 func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		logger.Logf("Update[status] | key: `%s`\n", msg.String())
 		return m, nil
 
 	case statusTickMsg:
-		logger.Logf("Update[status] | tick\n")
 		tick := m.tick()
 		progress := m.progress.SetPercent(m.state.PercentCompleted())
 		return m, tea.Batch(tick, progress)
@@ -98,14 +96,7 @@ func (m statusModel) tick() tea.Cmd {
 			}
 
 			m.state.status = append(m.state.status, s)
-			if s.Error != nil {
-				logger.Logf("encrypt[%s] | error: %s\n", s.File, s.Error)
-			} else {
-				logger.Logf("encrypt[%s] | done\n", s.File)
-			}
 
-			// TODO: update progress
-			// TODO: update list
 			return statusTickMsg{}
 		default:
 			return statusTickMsg{}

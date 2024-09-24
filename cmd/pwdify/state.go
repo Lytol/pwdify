@@ -5,6 +5,7 @@ import "github.com/lytol/pwdify/pkg/pwdify"
 type state struct {
 	password string
 	files    []string
+	cwd      string
 	ch       chan pwdify.Status
 	status   []pwdify.Status
 }
