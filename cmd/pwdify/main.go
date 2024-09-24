@@ -27,8 +27,10 @@ func main() {
 	}
 
 	app := &cli.App{
-		Name:  "pwdify",
-		Usage: "Password protect your static HTML",
+		Name:            "pwdify",
+		Usage:           "Password protect your static HTML",
+		ArgsUsage:       "[directory]",
+		HideHelpCommand: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "password-env",
@@ -43,6 +45,21 @@ func main() {
 				cwd:      ".",
 			}
 
+			if ctx.NArg() > 1 {
+				return fmt.Errorf("too many arguments")
+			}
+
+			// If provided, set the working directory
+			directory := ctx.Args().First()
+			if directory != "" {
+				// Ensure that the directory exists
+				if _, err := os.Stat(directory); os.IsNotExist(err) {
+					return fmt.Errorf("`%s` is not a valid directory", directory)
+				}
+				state.cwd = directory
+			}
+
+			// Set password from environment variable
 			state.password = os.Getenv(ctx.String("password-env"))
 
 			logger.Logf("state: %+v\n", state)

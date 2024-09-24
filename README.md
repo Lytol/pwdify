@@ -15,7 +15,6 @@ A command line utility to password protect static web pages.
 - [ ] A file must be selected to continue on the files screen
 - [ ] Show keyboard help for each model screen
 - [ ] Select all / Select none for files
-- [ ] Accept a directory rather than assuming CWD
 - [ ] Everything should account appropriately for window size (WindowSizeMsg)
 - [ ] GH action for releases
 

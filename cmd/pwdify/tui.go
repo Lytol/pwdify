@@ -53,10 +53,6 @@ func newModel(s *state) model {
 	// TODO: This could be improved a lot...
 	if s.password != "" {
 		root.current = 1
-
-		if len(s.files) > 0 {
-			root.current = 2
-		}
 	}
 
 	return root

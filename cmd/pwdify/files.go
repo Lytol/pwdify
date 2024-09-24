@@ -14,11 +14,12 @@ import (
 
 type fileItem struct {
 	path     string
+	trimmed  string
 	selected bool
 }
 
 func (fi fileItem) FilterValue() string {
-	return fi.path
+	return fi.trimmed
 }
 
 type fileItemDelegate struct{}
@@ -42,12 +43,12 @@ func (d fileItemDelegate) Render(w io.Writer, m list.Model, index int, item list
 		fmt.Fprint(w, strings.Join([]string{
 			alternateStyle.MarginLeft(2).Render("•"),
 			alternateSecondaryStyle.Render(checkbox),
-			secondaryStyle.Render(i.path),
+			secondaryStyle.Render(i.trimmed),
 		}, " "))
 	} else {
 		fmt.Fprint(w, strings.Join([]string{
 			alternateSecondaryStyle.MarginLeft(4).Render(checkbox),
-			tertiaryStyle.Render(i.path),
+			tertiaryStyle.Render(i.trimmed),
 		}, " "))
 	}
 }
@@ -89,7 +90,12 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Add new items
 		for i, f := range msg.Files {
-			m.files.InsertItem(i, &fileItem{path: f})
+			trimmed := strings.TrimPrefix(f, m.state.cwd+string(filepath.Separator))
+
+			m.files.InsertItem(i, &fileItem{
+				path:    f,
+				trimmed: trimmed,
+			})
 		}
 
 		return m, nil
