@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/urfave/cli/v2"
@@ -29,13 +30,19 @@ func main() {
 	app := &cli.App{
 		Name:            "pwdify",
 		Usage:           "Password protect your static HTML",
-		ArgsUsage:       "[directory]",
+		ArgsUsage:       "[files... | directory]",
 		HideHelpCommand: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
+				Name:    "directory",
+				Aliases: []string{"d"},
+				Value:   ".",
+				Usage:   "working directory",
+			},
+			&cli.StringFlag{
 				Name:  "password-env",
 				Value: DefaultPasswordEnv,
-				Usage: "The environment variable to read the password from",
+				Usage: "environment variable to read the password from",
 			},
 		},
 		Action: func(ctx *cli.Context) error {
@@ -45,22 +52,28 @@ func main() {
 				cwd:      ".",
 			}
 
-			if ctx.NArg() > 1 {
-				return fmt.Errorf("too many arguments")
-			}
-
 			// If provided, set the working directory
-			directory := ctx.Args().First()
-			if directory != "" {
-				// Ensure that the directory exists
-				if _, err := os.Stat(directory); os.IsNotExist(err) {
-					return fmt.Errorf("`%s` is not a valid directory", directory)
-				}
-				state.cwd = directory
+			directory := ctx.String("directory")
+			di, err := os.Stat(directory)
+			if err != nil {
+				return fmt.Errorf("could not find directory: %s", err)
+			}
+			if !di.IsDir() {
+				return fmt.Errorf("not a directory: %s", directory)
 			}
 
 			// Set password from environment variable
 			state.password = os.Getenv(ctx.String("password-env"))
+
+			// Enumerate files and/or directories from the arguments
+			for _, arg := range ctx.Args().Slice() {
+				fileOrDir := filepath.Join(directory, arg)
+				_, err := os.Stat(fileOrDir)
+				if err != nil {
+					return fmt.Errorf("could not find file or directory: %s", err)
+				}
+				state.files = append(state.files, fileOrDir)
+			}
 
 			logger.Logf("state: %+v\n", state)
 

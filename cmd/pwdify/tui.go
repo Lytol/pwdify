@@ -24,6 +24,12 @@ var (
 	failureStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#D75F5F"))
 )
 
+type NextMsg struct{}
+
+func Next() tea.Msg {
+	return NextMsg{}
+}
+
 type PasswordCompleteMsg struct {
 	Password string
 }
@@ -49,12 +55,6 @@ func newModel(s *state) model {
 		current: 0,
 	}
 
-	// Change the starting screen based on the state
-	// TODO: This could be improved a lot...
-	if s.password != "" {
-		root.current = 1
-	}
-
 	return root
 }
 
@@ -63,13 +63,15 @@ func (m model) Current() tea.Model {
 }
 
 func (m model) Init() tea.Cmd {
-	return m.Current().Init()
+	return Next
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
+	case NextMsg:
+		return m.Next()
 	case tea.WindowSizeMsg:
 		for _, m := range m.models {
 			m.Update(msg)
@@ -86,14 +88,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case PasswordCompleteMsg:
 		logger.Logf("Update | password: `%s`\n", msg.Password)
 		m.state.password = msg.Password
-		m.current += 1
-		return m, m.Current().Init()
+		return m, Next
 
 	case FilesCompleteMsg:
 		logger.Logf("Update | file: `%s`\n", msg.Files)
 		m.state.files = msg.Files
-		m.current += 1
-		return m, m.Current().Init()
+		return m, Next
 	}
 
 	m.models[m.current], cmd = m.Current().Update(msg)
@@ -107,4 +107,16 @@ func (m model) View() string {
 	b.WriteString(m.Current().View())
 
 	return b.String()
+}
+
+func (m model) Next() (model, tea.Cmd) {
+	if m.state.password == "" {
+		m.current = 0
+	} else if len(m.state.files) == 0 {
+		m.current = 1
+	} else {
+		m.current = 2
+	}
+
+	return m, m.Current().Init()
 }

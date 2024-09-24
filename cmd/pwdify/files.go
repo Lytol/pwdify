@@ -102,12 +102,14 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.Type {
+
 		case tea.KeySpace:
 			i, ok := m.files.SelectedItem().(*fileItem)
 			if ok {
 				i.selected = !i.selected
 			}
 			return m, nil
+
 		case tea.KeyEnter:
 			selectedFiles := []string{}
 
@@ -120,6 +122,10 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if i.selected {
 					selectedFiles = append(selectedFiles, i.path)
 				}
+			}
+
+			if len(selectedFiles) == 0 {
+				return m, nil
 			}
 
 			return m, func() tea.Msg {

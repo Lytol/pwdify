@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -12,13 +13,23 @@ import (
 	"github.com/lytol/pwdify/pkg/pwdify"
 )
 
-type statusTickMsg struct{}
+type startMsg struct{}
+
+func start() tea.Msg {
+	return startMsg{}
+}
 
 type statusModel struct {
 	progress progress.Model
 	spinner  spinner.Model
 	state    *state
 	engine   *pwdify.Engine
+
+	status chan pwdify.Status
+
+	total     int
+	completed int
+	errors    int
 }
 
 func newStatusModel(s *state) statusModel {
@@ -31,24 +42,37 @@ func newStatusModel(s *state) statusModel {
 	return statusModel{
 		progress: prg,
 		spinner:  spn,
-		engine:   pwdify.New(),
 		state:    s,
 	}
 }
 
 func (m statusModel) Init() tea.Cmd {
-	return tea.Batch(m.encrypt, m.spinner.Tick)
+	return tea.Batch(start, m.spinner.Tick)
 }
 
 func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		return m, nil
+	case startMsg:
+		var err error
+		m.engine, err = pwdify.New(m.state.files, m.state.password)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "could not start pwdify engine: %s\n", err)
+			return m, tea.Quit
+		}
+		m.total = len(m.engine.Files)
+		m.status = m.engine.Run()
+		logger.Logf("status[files] | %+v\n", m.engine.Files)
+		return m, m.tick()
 
-	case statusTickMsg:
-		tick := m.tick()
-		progress := m.progress.SetPercent(m.state.PercentCompleted())
-		return m, tea.Batch(tick, progress)
+	case pwdify.Status:
+		m.completed += 1
+
+		if msg.Error != nil {
+			m.errors += 1
+		}
+
+		progress := m.progress.SetPercent(m.percentComplete())
+		return m, tea.Batch(m.tick(), progress)
 
 	case progress.FrameMsg:
 		pm, cmd := m.progress.Update(msg)
@@ -67,11 +91,11 @@ func (m statusModel) View() string {
 
 	b.WriteString(lipgloss.NewStyle().Margin(1, 2).Render(m.progress.View()) + "\n")
 
-	statusStr := fmt.Sprintf("%d/%d completed • %d errors\n", m.state.CompleteCount(), m.state.TotalCount(), m.state.ErrorCount())
+	statusStr := fmt.Sprintf("%d/%d completed • %d errors\n", m.completed, m.total, m.errors)
 
-	if !m.state.Completed() {
+	if !m.finished() {
 		b.WriteString(lipgloss.NewStyle().MarginLeft(2).Width(4).Render(m.spinner.View()))
-	} else if m.state.ErrorCount() > 0 {
+	} else if m.errors > 0 {
 		b.WriteString(failureStyle.MarginLeft(2).Width(4).Render("✗"))
 	} else {
 		b.WriteString(successStyle.MarginLeft(2).Width(4).Render("✔"))
@@ -82,24 +106,20 @@ func (m statusModel) View() string {
 	return b.String()
 }
 
-func (m statusModel) encrypt() tea.Msg {
-	m.state.ch = m.engine.Run(m.state.files, m.state.password)
-	return statusTickMsg{}
-}
-
 func (m statusModel) tick() tea.Cmd {
 	return tea.Every(time.Second, func(t time.Time) tea.Msg {
-		select {
-		case s, ok := <-m.state.ch:
-			if !ok {
-				return tea.QuitMsg{}
-			}
-
-			m.state.status = append(m.state.status, s)
-
-			return statusTickMsg{}
-		default:
-			return statusTickMsg{}
+		s, ok := <-m.status
+		if !ok {
+			return tea.QuitMsg{}
 		}
+		return s
 	})
+}
+
+func (m statusModel) percentComplete() float64 {
+	return float64(m.completed) / float64(m.total)
+}
+
+func (m statusModel) finished() bool {
+	return m.completed == m.total
 }

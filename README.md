@@ -6,12 +6,6 @@ A command line utility to password protect static web pages.
 
 ### TODO
 
-- [ ] Files should be able to be specified via command line argument (and stdin, newline separated)
-  - [ ] --all (should include all html files in the working directory)
-  - [ ] STDIN, newline separated (i.e. quarto post-render)
-  - [ ] --include \<_glob_\>
-  - [ ] --exclude \<_glob_\>
-  - [ ] Skip the files screen if specified
 - [ ] A file must be selected to continue on the files screen
 - [ ] Show keyboard help for each model screen
 - [ ] Select all / Select none for files
@@ -20,7 +14,7 @@ A command line utility to password protect static web pages.
 
 - [ ] Create a GH action for community usage
 - [ ] Password should be able to be specified via file: --password-file
-- [ ] Non-interactive output
+- [ ] Non-interactive and "quiet" output when a tty doesn't exist (or --quiet/-q)
 
 ### Notes
 
