@@ -10,7 +10,9 @@ A command line utility to password protect static web pages.
 - [ ] Select all / Select none for files
 - [ ] Output each file as it is completed on the status screen
 - [ ] Everything should account appropriately for window size (WindowSizeMsg)
+- [ ] Write some tests already...
 - [ ] GH action for releases
+- [ ] Update the README with installation and usage
 
 - [ ] Create a GH action for community usage
 - [ ] Non-interactive and "quiet" output when a tty doesn't exist (or --quiet/-q)

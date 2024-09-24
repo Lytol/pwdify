@@ -23,7 +23,6 @@ type statusModel struct {
 	progress progress.Model
 	spinner  spinner.Model
 	state    *state
-	engine   *pwdify.Engine
 
 	status chan pwdify.Status
 
@@ -54,14 +53,11 @@ func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case startMsg:
 		var err error
-		m.engine, err = pwdify.New(m.state.files, m.state.password)
+		m.status, m.total, err = pwdify.Encrypt(m.state.files, m.state.password)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not start pwdify engine: %s\n", err)
 			return m, tea.Quit
 		}
-		m.total = len(m.engine.Files)
-		m.status = m.engine.Run()
-		logger.Logf("status[files] | %+v\n", m.engine.Files)
 		return m, m.tick()
 
 	case pwdify.Status:
