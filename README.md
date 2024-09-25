@@ -6,12 +6,11 @@ A command line utility to password protect static web pages.
 
 ### TODO
 
-- [ ] Show keyboard help for each model screen
-- [ ] Select all / Select none for files
 - [ ] Output each file as it is completed on the status screen
 - [ ] Everything should account appropriately for window size (WindowSizeMsg)
 - [ ] Write some tests already...
 - [ ] GH action for releases
+  - [ ] https://goreleaser.com/
 - [ ] Update the README with installation and usage
 
 - [ ] Create a GH action for community usage

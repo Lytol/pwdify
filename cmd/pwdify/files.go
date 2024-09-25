@@ -7,10 +7,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
+
+var listStyle = lipgloss.NewStyle().Margin(1, 0)
 
 type fileItem struct {
 	path     string
@@ -57,20 +60,70 @@ type readDirMsg struct {
 	Files []string
 }
 
+type filesKeyMap struct {
+	Submit key.Binding
+	Toggle key.Binding
+	All    key.Binding
+	None   key.Binding
+}
+
+var filesKeys = filesKeyMap{
+	Submit: key.NewBinding(
+		key.WithKeys("enter"),
+		key.WithHelp("enter", "submit"),
+	),
+	Toggle: key.NewBinding(
+		key.WithKeys(" ", "x"),
+		key.WithHelp("space/x", "toggle"),
+	),
+	All: key.NewBinding(
+		key.WithKeys("a"),
+		key.WithHelp("a", "select all"),
+	),
+	None: key.NewBinding(
+		key.WithKeys("d"),
+		key.WithHelp("d", "select none"),
+	),
+}
+
 type filesModel struct {
 	files list.Model
 	state *state
+	keys  filesKeyMap
 }
 
 func newFilesModel(s *state) filesModel {
 	l := list.New([]list.Item{}, fileItemDelegate{}, 80, 10)
 	l.Title = "Select files to password protect"
 	l.Styles.Title = primaryStyle
-	l.SetHeight(12)
+	l.SetHeight(20)
+	l.SetFilteringEnabled(false)
+	l.SetShowStatusBar(false)
+
+	// Key bindings
+	l.KeyMap.Quit = key.NewBinding(
+		key.WithKeys("ctrl+c"),
+		key.WithHelp("ctrl-c", "quit"),
+	)
+	l.AdditionalShortHelpKeys = func() []key.Binding {
+		return []key.Binding{
+			filesKeys.Toggle,
+			filesKeys.Submit,
+		}
+	}
+	l.AdditionalFullHelpKeys = func() []key.Binding {
+		return []key.Binding{
+			filesKeys.Toggle,
+			filesKeys.Submit,
+			filesKeys.All,
+			filesKeys.None,
+		}
+	}
 
 	return filesModel{
 		state: s,
 		files: l,
+		keys:  filesKeys,
 	}
 }
 
@@ -82,6 +135,9 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		return m, nil
+
 	case readDirMsg:
 		// Clear existing items
 		for i := range m.files.Items() {
@@ -101,16 +157,35 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tea.KeyMsg:
-		switch msg.Type {
-
-		case tea.KeySpace:
+		switch {
+		case key.Matches(msg, m.keys.Toggle):
 			i, ok := m.files.SelectedItem().(*fileItem)
 			if ok {
 				i.selected = !i.selected
 			}
 			return m, nil
 
-		case tea.KeyEnter:
+		case key.Matches(msg, m.keys.All):
+			for _, item := range m.files.Items() {
+				i, ok := item.(*fileItem)
+				if !ok {
+					return m, tea.Quit
+				}
+				i.selected = true
+			}
+			return m, nil
+
+		case key.Matches(msg, m.keys.None):
+			for _, item := range m.files.Items() {
+				i, ok := item.(*fileItem)
+				if !ok {
+					return m, tea.Quit
+				}
+				i.selected = false
+			}
+			return m, nil
+
+		case key.Matches(msg, m.keys.Submit):
 			selectedFiles := []string{}
 
 			for _, item := range m.files.Items() {
@@ -141,7 +216,7 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m filesModel) View() string {
 	var b strings.Builder
 
-	b.WriteString(lipgloss.NewStyle().Margin(1, 2).Render(m.files.View()))
+	b.WriteString(listStyle.Render(m.files.View()) + "\n")
 
 	return b.String()
 }

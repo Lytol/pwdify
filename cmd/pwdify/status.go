@@ -51,6 +51,9 @@ func (m statusModel) Init() tea.Cmd {
 
 func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		return m, nil
+
 	case startMsg:
 		var err error
 		m.status, m.total, err = pwdify.Encrypt(m.state.files, m.state.password)

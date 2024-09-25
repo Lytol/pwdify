@@ -34,7 +34,7 @@ func main() {
 		HideHelpCommand: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:    "directory",
+				Name:    "cwd",
 				Aliases: []string{"d"},
 				Value:   ".",
 				Usage:   "working directory",
@@ -53,21 +53,22 @@ func main() {
 			}
 
 			// If provided, set the working directory
-			directory := ctx.String("directory")
-			di, err := os.Stat(directory)
+			cwd := ctx.String("cwd")
+			di, err := os.Stat(cwd)
 			if err != nil {
 				return fmt.Errorf("could not find directory: %s", err)
 			}
 			if !di.IsDir() {
-				return fmt.Errorf("not a directory: %s", directory)
+				return fmt.Errorf("not a directory: %s", cwd)
 			}
+			state.cwd = cwd
 
 			// Set password from environment variable
 			state.password = os.Getenv(ctx.String("password-env"))
 
 			// Enumerate files and/or directories from the arguments
 			for _, arg := range ctx.Args().Slice() {
-				fileOrDir := filepath.Join(directory, arg)
+				fileOrDir := filepath.Join(state.cwd, arg)
 				_, err := os.Stat(fileOrDir)
 				if err != nil {
 					return fmt.Errorf("could not find file or directory: %s", err)

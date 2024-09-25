@@ -73,17 +73,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case NextMsg:
 		return m.Next()
 	case tea.WindowSizeMsg:
-		for _, m := range m.models {
-			m.Update(msg)
+		cmds := make([]tea.Cmd, len(m.models))
+		for i, mdl := range m.models {
+			cm, cmd := mdl.Update(msg)
+			if cmd != nil {
+				cmds = append(cmds, cmd)
+			}
+			m.models[i] = cm
 		}
-		return m, nil
-
-	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlC:
-			logger.Logf("Update | quit\n")
-			return m, tea.Quit
-		}
+		return m, tea.Batch(cmds...)
 
 	case PasswordCompleteMsg:
 		logger.Logf("Update | password: `%s`\n", msg.Password)
