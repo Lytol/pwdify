@@ -10,8 +10,8 @@ version: 2
 
 before:
   hooks:
+    - make setup
     - make build-template
-    - go mod tidy
 
 builds:
   - main: ./cmd/pwdify

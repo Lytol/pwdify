@@ -1,5 +1,10 @@
 BINFILE=pwdify
 
+all: setup build
+
+setup:
+	go mod tidy && cd template && npm install
+
 build: build-template
 	go build -o ${BINFILE} cmd/pwdify/*
 
@@ -15,4 +20,4 @@ build-template:
 install: build
 	sudo mv ${BINFILE} /usr/local/bin/
 
-.PHONY: build build-template run test
+.PHONY: all setup build build-template run test install
