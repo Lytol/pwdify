@@ -3,11 +3,8 @@ pwdify
 
 A command line utility to password protect static web pages.
 
-
 ### TODO
 
-- [ ] Output each file as it is completed on the status screen
-- [ ] Everything should account appropriately for window size (WindowSizeMsg)
 - [ ] Write some tests already...
 - [ ] GH action for releases
   - [ ] https://goreleaser.com/
@@ -15,7 +12,10 @@ A command line utility to password protect static web pages.
 
 - [ ] Create a GH action for community usage
 - [ ] Non-interactive and "quiet" output when a tty doesn't exist (or --quiet/-q)
+- [ ] Output each file as it is completed on the status screen
+- [ ] Everything should be full-screen and appropriately for window size (WindowSizeMsg)
 - [ ] docs/ site for documentation and website
+- [ ] Status TUI screen should be cancellable with `ctrl-c`
 
 ### Notes
 
