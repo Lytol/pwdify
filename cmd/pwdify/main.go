@@ -15,6 +15,9 @@ import (
 const DefaultPasswordEnv = "PWDIFY_PASSWORD"
 
 var (
+	// version should be provided by ldflags in release
+	version = "dev"
+
 	logger util.Logger
 )
 
@@ -44,12 +47,23 @@ func main() {
 				Value: DefaultPasswordEnv,
 				Usage: "environment variable for password",
 			},
+			&cli.BoolFlag{
+				Name:    "version",
+				Aliases: []string{"v"},
+				Usage:   "show version",
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			state := &state{
 				password: "",
 				files:    []string{},
 				cwd:      ".",
+			}
+
+			// If version flag is set, print version and exit
+			if ctx.Bool("version") {
+				fmt.Println(version)
+				return nil
 			}
 
 			// If provided, set the working directory
