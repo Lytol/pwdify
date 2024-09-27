@@ -1,4 +1,4 @@
-package main
+package tui
 
 import (
 	"strings"
@@ -40,10 +40,9 @@ type passwordModel struct {
 	keys     passwordKeyMap
 	password textinput.Model
 	help     help.Model
-	state    *state
 }
 
-func newPasswordModel(s *state) passwordModel {
+func newPasswordModel() passwordModel {
 	t := textinput.New()
 	t.PromptStyle = alternateStyle
 	t.TextStyle = secondaryStyle
@@ -57,7 +56,6 @@ func newPasswordModel(s *state) passwordModel {
 		keys:     passwordKeys,
 		password: t,
 		help:     help.New(),
-		state:    s,
 	}
 }
 

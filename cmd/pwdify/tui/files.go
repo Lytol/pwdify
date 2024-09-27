@@ -1,4 +1,4 @@
-package main
+package tui
 
 import (
 	"fmt"
@@ -88,11 +88,11 @@ var filesKeys = filesKeyMap{
 
 type filesModel struct {
 	files list.Model
-	state *state
 	keys  filesKeyMap
+	cwd   string
 }
 
-func newFilesModel(s *state) filesModel {
+func newFilesModel(cwd string) filesModel {
 	l := list.New([]list.Item{}, fileItemDelegate{}, 80, 10)
 	l.Title = "Select files to password protect"
 	l.Styles.Title = primaryStyle
@@ -121,14 +121,14 @@ func newFilesModel(s *state) filesModel {
 	}
 
 	return filesModel{
-		state: s,
 		files: l,
 		keys:  filesKeys,
+		cwd:   cwd,
 	}
 }
 
 func (m filesModel) Init() tea.Cmd {
-	return readDir(m.state.cwd)
+	return readDir(m.cwd)
 }
 
 func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -146,7 +146,7 @@ func (m filesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Add new items
 		for i, f := range msg.Files {
-			trimmed := strings.TrimPrefix(f, m.state.cwd+string(filepath.Separator))
+			trimmed := strings.TrimPrefix(f, m.cwd+string(filepath.Separator))
 
 			m.files.InsertItem(i, &fileItem{
 				path:    f,

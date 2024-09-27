@@ -1,4 +1,4 @@
-package main
+package tui
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func start() tea.Msg {
 type statusModel struct {
 	progress progress.Model
 	spinner  spinner.Model
-	state    *state
+	config   *pwdify.Config
 
 	status chan pwdify.Status
 
@@ -31,7 +31,7 @@ type statusModel struct {
 	errors    int
 }
 
-func newStatusModel(s *state) statusModel {
+func newStatusModel(cfg *pwdify.Config) statusModel {
 	prg := progress.New(progress.WithSolidFill(tertiaryColor))
 
 	spn := spinner.New()
@@ -41,7 +41,7 @@ func newStatusModel(s *state) statusModel {
 	return statusModel{
 		progress: prg,
 		spinner:  spn,
-		state:    s,
+		config:   cfg,
 	}
 }
 
@@ -56,7 +56,7 @@ func (m statusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case startMsg:
 		var err error
-		m.status, m.total, err = pwdify.Encrypt(m.state.files, m.state.password)
+		m.status, m.total, err = pwdify.Encrypt(m.config.Files, m.config.Password)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not start pwdify engine: %s\n", err)
 			return m, tea.Quit

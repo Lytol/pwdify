@@ -6,10 +6,10 @@ setup:
 	go mod tidy && cd template && npm install
 
 build: build-template
-	go build -o ${BINFILE} cmd/pwdify/*
+	go build -o ${BINFILE} cmd/pwdify/main.go
 
 run:
-	@DEBUG=1 go run cmd/pwdify/* $(ARGS)
+	@DEBUG=1 go run cmd/pwdify/main.go $(ARGS)
 
 test:
 	go test -v ./...

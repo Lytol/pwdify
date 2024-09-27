@@ -1,10 +1,11 @@
-package main
+package tui
 
 import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/lytol/pwdify/pkg/pwdify"
 )
 
 var (
@@ -38,19 +39,24 @@ type FilesCompleteMsg struct {
 	Files []string
 }
 
+func Run(cfg *pwdify.Config) error {
+	_, err := tea.NewProgram(newModel(cfg)).Run()
+	return err
+}
+
 type model struct {
 	models  []tea.Model
 	current int
-	state   *state
+	config  *pwdify.Config
 }
 
-func newModel(s *state) model {
+func newModel(cfg *pwdify.Config) model {
 	root := model{
-		state: s,
+		config: cfg,
 		models: []tea.Model{
-			newPasswordModel(s),
-			newFilesModel(s),
-			newStatusModel(s),
+			newPasswordModel(),
+			newFilesModel(cfg.Cwd),
+			newStatusModel(cfg),
 		},
 		current: 0,
 	}
@@ -84,13 +90,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 
 	case PasswordCompleteMsg:
-		logger.Logf("Update | password: `%s`\n", msg.Password)
-		m.state.password = msg.Password
+		m.config.Password = msg.Password
 		return m, Next
 
 	case FilesCompleteMsg:
-		logger.Logf("Update | file: `%s`\n", msg.Files)
-		m.state.files = msg.Files
+		m.config.Files = msg.Files
 		return m, Next
 	}
 
@@ -108,9 +112,9 @@ func (m model) View() string {
 }
 
 func (m model) Next() (model, tea.Cmd) {
-	if m.state.password == "" {
+	if m.config.Password == "" {
 		m.current = 0
-	} else if len(m.state.files) == 0 {
+	} else if len(m.config.Files) == 0 {
 		m.current = 1
 	} else {
 		m.current = 2
